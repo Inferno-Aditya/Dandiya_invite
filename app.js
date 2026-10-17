@@ -1,27 +1,55 @@
 /**
  * Dandiya Partner Invite - Minimalist Animated Cat
- * Built following Emil Kowalski's animation philosophy (animate skill):
- * - Expressive SVG animations with hardware-accelerated transforms
- * - Dynamic pupil eye-tracking following the cursor
- * - Moving paws with peek-a-boo gap mechanics
- * - Evasive 'No' button with smooth physics
- * - Exit-intent top-right detection
+ * Features:
+ * - Expressive SVG animations: Left paw on eye, Right paw peeking with separated fingers
+ * - Glitch-free 'No' button evasion (large minimum-distance jumps + debounce)
+ * - Dynamic cursor-tracking pupil
+ * - Personalization: Names revealed before & after YES click
  * - Simple heartfelt words: "Please?", "Wait...", "Sorry!", "Yay!"
  * - Zero Unicode Emojis
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initAmbientCanvas();
+  initPersonalization();
   initCatAnimations();
   initInteractions();
 });
 
 /* ==========================================================================
-   1. Animated Cat Controller
+   1. Personalization Logic
+   ========================================================================== */
+let recipientName = "";
+let senderName = "";
+let senderPhone = "";
+
+function initPersonalization() {
+  const params = new URLSearchParams(window.location.search);
+  const to = params.get('to');
+  const from = params.get('from');
+  const phone = params.get('phone');
+
+  if (to && to.trim()) recipientName = to.trim();
+  if (from && from.trim()) senderName = from.trim();
+  if (phone && phone.trim()) senderPhone = phone.trim().replace(/[^0-9+]/g, '');
+
+  const partnerDisplay = document.getElementById('partner-name-display');
+  if (partnerDisplay) {
+    if (recipientName) {
+      partnerDisplay.textContent = `, ${recipientName}`;
+    } else {
+      partnerDisplay.textContent = "";
+    }
+  }
+}
+
+/* ==========================================================================
+   2. Animated Cat Controller
    ========================================================================== */
 let catState = 'peeking'; // 'peeking', 'happy', 'sad', 'crying', 'celebrate'
 let isAnswered = false;
 let dodgeCount = 0;
+let isDodging = false;
 
 const SIMPLE_WORDS = [
   "Wait...",
@@ -35,36 +63,29 @@ const SIMPLE_WORDS = [
 
 function initCatAnimations() {
   const catStage = document.getElementById('cat-stage');
-  const normalEyes = document.getElementById('normal-eyes');
-  const happyEyes = document.getElementById('happy-eyes');
-  const sadEyes = document.getElementById('sad-eyes');
   const leftEar = document.getElementById('ear-left');
-  const pupilLeft = document.getElementById('pupil-left');
   const pupilRight = document.getElementById('pupil-right');
-  const wordEl = document.getElementById('emotion-word');
 
   // Set initial state
   applyCatState('peeking', 'Please?');
 
-  // Blinking loop (every 3.6s)
+  // Organic blinking loop (every 3.5s)
   setInterval(() => {
-    if (catState === 'normal' || catState === 'peeking') {
+    if (catState === 'peeking') {
       catStage.classList.add('blinking');
-      setTimeout(() => {
-        catStage.classList.remove('blinking');
-      }, 140);
+      setTimeout(() => catStage.classList.remove('blinking'), 130);
     }
-  }, 3600);
+  }, 3500);
 
-  // Random ear twitch
+  // Random playful ear twitch
   setInterval(() => {
     if (Math.random() > 0.4 && leftEar) {
       leftEar.classList.add('twitch');
       setTimeout(() => leftEar.classList.remove('twitch'), 400);
     }
-  }, 4500);
+  }, 4200);
 
-  // Eye pupil tracking mouse cursor
+  // Dynamic Eye Pupil Tracking & Paw Peeking
   document.addEventListener('mousemove', (e) => {
     if (isAnswered) return;
 
@@ -78,12 +99,12 @@ function initCatAnimations() {
     const pupilX = Math.cos(angle) * dist;
     const pupilY = Math.sin(angle) * dist;
 
-    if (pupilLeft && pupilRight && (catState === 'peeking' || catState === 'sad')) {
-      pupilLeft.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+    // Move the visible right pupil to track the cursor
+    if (pupilRight && (catState === 'peeking' || catState === 'sad')) {
       pupilRight.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
     }
 
-    // Dynamic paw peek: when cursor moves, paws separate slightly to peek through!
+    // When cursor moves, the right paw parts slightly wider to peek through!
     if (catState === 'peeking') {
       catStage.classList.add('peek-open');
       clearTimeout(window._peekTimer);
@@ -91,7 +112,7 @@ function initCatAnimations() {
         if (catState === 'peeking') {
           catStage.classList.remove('peek-open');
         }
-      }, 700);
+      }, 650);
     }
   });
 }
@@ -106,11 +127,11 @@ function applyCatState(state, word) {
   const sadEyes = document.getElementById('sad-eyes');
   const wordEl = document.getElementById('emotion-word');
 
-  // Remove existing state classes
+  // Update stage classes
   catStage.classList.remove('cat-state-peeking', 'cat-state-happy', 'cat-state-sad', 'cat-state-crying', 'cat-state-celebrate');
   catStage.classList.add(`cat-state-${state}`);
 
-  // Switch eye graphics
+  // Switch eye visuals
   if (state === 'happy' || state === 'celebrate') {
     normalEyes.classList.add('hidden');
     sadEyes.classList.add('hidden');
@@ -120,13 +141,12 @@ function applyCatState(state, word) {
     happyEyes.classList.add('hidden');
     sadEyes.classList.remove('hidden');
   } else {
-    // Normal / Peeking
     happyEyes.classList.add('hidden');
     sadEyes.classList.add('hidden');
     normalEyes.classList.remove('hidden');
   }
 
-  // Update simple word
+  // Animate simple word transition
   if (wordEl && word) {
     wordEl.style.opacity = '0';
     wordEl.style.transform = 'translateY(4px)';
@@ -139,14 +159,13 @@ function applyCatState(state, word) {
 }
 
 /* ==========================================================================
-   2. Interactive Buttons & Evasive Logic
+   3. Glitch-Free 'No' Button Evasion
    ========================================================================== */
 function initInteractions() {
   const btnYes = document.getElementById('btn-yes');
   const btnNo = document.getElementById('btn-no');
-  const arena = document.getElementById('button-arena');
 
-  // Hovering over YES
+  // Hovering over YES button
   btnYes.addEventListener('mouseenter', () => {
     applyCatState('happy', 'Yes?');
   });
@@ -157,9 +176,9 @@ function initInteractions() {
     }
   });
 
-  // Approaching NO button (Evasive Physics)
+  // Approaching NO button (Smart Distance Jump with Debounce)
   document.addEventListener('mousemove', (e) => {
-    if (isAnswered) return;
+    if (isAnswered || isDodging) return;
 
     const rect = btnNo.getBoundingClientRect();
     const btnCenterX = rect.left + rect.width / 2;
@@ -167,52 +186,75 @@ function initInteractions() {
 
     const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
 
-    if (dist < 85) {
-      evadeNoButton();
+    if (dist < 80) {
+      evadeNoButton(e.clientX, e.clientY);
     }
   });
 
   btnNo.addEventListener('mouseenter', (e) => {
     e.preventDefault();
-    evadeNoButton();
+    if (!isDodging) evadeNoButton(e.clientX, e.clientY);
   });
 
   // Mobile Touch Support
   btnNo.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    evadeNoButton();
+    const touch = e.touches[0];
+    if (!isDodging) evadeNoButton(touch.clientX, touch.clientY);
   });
 
   btnNo.addEventListener('click', (e) => {
     e.preventDefault();
-    evadeNoButton();
+    if (!isDodging) evadeNoButton();
   });
 
-  function evadeNoButton() {
-    if (isAnswered) return;
+  function evadeNoButton(cursorX, cursorY) {
+    if (isAnswered || isDodging) return;
+    isDodging = true;
 
     dodgeCount++;
     const nextWord = SIMPLE_WORDS[(dodgeCount - 1) % SIMPLE_WORDS.length];
     applyCatState('sad', nextWord);
 
-    // Calculate safe evasion coordinates inside card
     const card = document.getElementById('invite-card');
     const cardRect = card.getBoundingClientRect();
 
-    const maxDeltaX = (cardRect.width / 2) - 60;
-    const maxDeltaY = 65;
+    // Calculate a position guaranteed to be far from the cursor
+    const cardCenterX = cardRect.left + cardRect.width / 2;
+    const cardCenterY = cardRect.top + cardRect.height / 2;
 
-    const offsetX = (Math.random() * 2 - 1) * maxDeltaX;
-    const offsetY = (Math.random() * 2 - 1) * maxDeltaY;
+    // Pick between 4 wide opposing quadrants
+    const angles = [Math.PI * 0.25, Math.PI * 0.75, Math.PI * 1.25, Math.PI * 1.75];
+    const pickAngle = angles[Math.floor(Math.random() * angles.length)];
 
-    btnNo.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    const jumpDistanceX = 110 + Math.random() * 45;
+    const jumpDistanceY = 55 + Math.random() * 30;
 
-    // YES button subtly grows larger
-    const yesScale = Math.min(1 + dodgeCount * 0.07, 1.4);
+    let targetOffsetX = Math.cos(pickAngle) * jumpDistanceX;
+    let targetOffsetY = Math.sin(pickAngle) * jumpDistanceY;
+
+    // If mouse coordinates are known, ensure target jumps away from mouse
+    if (cursorX !== undefined) {
+      if (cursorX < cardCenterX) {
+        targetOffsetX = Math.abs(targetOffsetX); // Jump to right side
+      } else {
+        targetOffsetX = -Math.abs(targetOffsetX); // Jump to left side
+      }
+    }
+
+    btnNo.style.transform = `translate(${targetOffsetX}px, ${targetOffsetY}px)`;
+
+    // YES button subtly scales larger with each attempt
+    const yesScale = Math.min(1 + dodgeCount * 0.08, 1.45);
     btnYes.style.transform = `scale(${yesScale})`;
+
+    // Debounce to prevent rapid hover loops
+    setTimeout(() => {
+      isDodging = false;
+    }, 280);
   }
 
-  // Clicking YES (Victory!)
+  // Clicking YES (The Big Moment)
   btnYes.addEventListener('click', () => {
     handleVictory();
   });
@@ -241,16 +283,32 @@ function handleVictory() {
   isAnswered = true;
   applyCatState('celebrate', 'Yay!');
 
-  // Hide button arena
+  // Hide question arena and show celebration view
   const arena = document.getElementById('button-arena');
   const celebration = document.getElementById('celebration-container');
   if (arena) arena.style.display = 'none';
   if (celebration) celebration.style.display = 'block';
 
-  // Launch celebratory floating embers
+  // Personalization in Celebration Screen
+  const duoText = document.getElementById('celebration-duo-text');
+  const senderSubtext = document.getElementById('celebration-sender-subtext');
+  const replyBtnText = document.getElementById('reply-btn-text');
+
+  if (recipientName && senderName) {
+    if (duoText) duoText.textContent = `${recipientName} & ${senderName} are officially Dandiya partners!`;
+    if (senderSubtext) senderSubtext.textContent = `Get your traditional outfit ready!`;
+    if (replyBtnText) replyBtnText.textContent = `Text ${senderName} on WhatsApp`;
+  } else if (senderName) {
+    if (duoText) duoText.textContent = `You & ${senderName} are officially going together!`;
+    if (replyBtnText) replyBtnText.textContent = `Text ${senderName} on WhatsApp`;
+  } else if (recipientName) {
+    if (duoText) duoText.textContent = `${recipientName}, can't wait to dance with you!`;
+  }
+
+  // Launch celebration embers
   triggerConfetti();
 
-  // Setup simple WhatsApp reply
+  // Setup WhatsApp reply link
   setupReplyLink();
 }
 
@@ -258,19 +316,18 @@ function setupReplyLink() {
   const link = document.getElementById('whatsapp-link');
   if (!link) return;
 
-  const params = new URLSearchParams(window.location.search);
-  const phone = params.get('phone') || '';
+  const toWhom = senderName ? senderName : "you";
+  const cleanMessage = encodeURIComponent(`YES! I would love to be your Dandiya partner!`);
 
-  const cleanMessage = encodeURIComponent("YES! Can't wait to be your Dandiya partner!");
   let url = `https://api.whatsapp.com/send?text=${cleanMessage}`;
-  if (phone) {
-    url = `https://api.whatsapp.com/send?phone=${phone.replace(/[^0-9+]/g, '')}&text=${cleanMessage}`;
+  if (senderPhone) {
+    url = `https://api.whatsapp.com/send?phone=${senderPhone}&text=${cleanMessage}`;
   }
   link.href = url;
 }
 
 /* ==========================================================================
-   3. Ambient Starry Canvas & Celebration Embers
+   4. Ambient Starry Canvas & Celebration Embers
    ========================================================================== */
 let particles = [];
 let celebrationEmbers = [];
@@ -288,7 +345,7 @@ function initAmbientCanvas() {
     height = canvas.height = window.innerHeight;
   });
 
-  // Soft ambient fairy lights
+  // Ambient fairy lights
   for (let i = 0; i < 35; i++) {
     particles.push({
       x: Math.random() * width,

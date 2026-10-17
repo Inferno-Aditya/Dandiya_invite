@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Dandiya Partner Invite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient Night Glow Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <main class="card-container create-card">
+    <div class="invite-card">
+      <h1 class="create-title">Create Dandiya Invite</h1>
+      <p class="create-subtitle">Ask your partner out with an interactive animated cat</p>
+
+      <form id="invite-form" class="create-form">
+        <div class="field-group">
+          <label for="from-name">Your Name</label>
+          <input type="text" id="from-name" placeholder="e.g. Rahul" required autocomplete="off">
+        </div>
+
+        <div class="field-group">
+          <label for="to-name">Partner's Name</label>
+          <input type="text" id="to-name" placeholder="e.g. Ananya" required autocomplete="off">
+        </div>
+
+        <div class="field-group">
+          <label for="phone-number">Your WhatsApp Number (Optional)</label>
+          <input type="tel" id="phone-number" placeholder="e.g. 919876543210" autocomplete="off">
+          <small>Her 'Yes' reply button will open WhatsApp directly to your number.</small>
+        </div>
+
+        <button type="submit" class="btn btn-yes btn-generate">
+          <span>Generate Invite Link</span>
+        </button>
+      </form>
+
+      <!-- Result Link Box (Hidden initially) -->
+      <div id="result-box" class="result-card" style="display: none;">
+        <div class="result-label">Your Custom Link:</div>
+        <div class="link-box">
+          <input type="text" id="share-link-input" readonly>
+          <button id="copy-btn" class="btn btn-copy">Copy</button>
+        </div>
+        <div class="result-actions">
+          <a id="preview-anchor" href="#" target="_blank" class="preview-link">
+            Open & test preview
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initAmbientCanvas();
+
+      const form = document.getElementById('invite-form');
+      const resultBox = document.getElementById('result-box');
+      const linkInput = document.getElementById('share-link-input');
+      const copyBtn = document.getElementById('copy-btn');
+      const previewAnchor = document.getElementById('preview-anchor');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const from = document.getElementById('from-name').value.trim();
+        const to = document.getElementById('to-name').value.trim();
+        const phone = document.getElementById('phone-number').value.trim().replace(/[^0-9+]/g, '');
+
+        const baseUrl = window.location.origin + window.location.pathname.replace('create.html', 'index.html');
+        const params = new URLSearchParams();
+        if (to) params.set('to', to);
+        if (from) params.set('from', from);
+        if (phone) params.set('phone', phone);
+
+        const finalUrl = `${baseUrl}?${params.toString()}`;
+
+        linkInput.value = finalUrl;
+        previewAnchor.href = finalUrl;
+        resultBox.style.display = 'block';
+
+        // Auto copy to clipboard
+        navigator.clipboard.writeText(finalUrl).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+        });
+      });
+
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+        });
+      });
+    });
+
+    // Ambient floating lights
+    function initAmbientCanvas() {
+      const canvas = document.getElementById('ambient-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = [];
+      for (let i = 0; i < 30; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2 + 0.8,
+          speedY: -Math.random() * 0.3 - 0.1,
+          alpha: Math.random() * 0.5 + 0.2
+        });
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, width, height);
+        for (let p of particles) {
+          p.y += p.speedY;
+          if (p.y < 0) p.y = height;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 215, 0, ${p.alpha})`;
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = '#f5c542';
+          ctx.fill();
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  </script>
+</body>
+</html>
