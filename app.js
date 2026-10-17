@@ -1,12 +1,12 @@
 /**
  * Dandiya Partner Invite - Minimalist Animated Cat
  * Features:
- * - Lifelike organic kitten animations: Left paw on eye, Right paw peeking through
- * - Flowing translucent tear cascades & quivering lip when sad (No static sweat blob)
- * - 100% Guaranteed Zero-Overlap 'No' button peripheral evasion
- * - Dynamic cursor-tracking pupil
- * - Encrypted URL token decoding (Private links)
- * - Zero Unicode Emojis
+ * - Cat hanging from above the box looking down
+ * - Cat grabs the 'No' button and runs away across the box
+ * - Lifelike Kindchenschema facial expressions & pupil tracking
+ * - Flowing translucent tear cascades (No static sweat drops)
+ * - Decodes encrypted invite links (?c=...)
+ * - Zero Unicode emojis
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,7 +30,6 @@ function initPersonalization() {
 
   if (encryptedCode) {
     try {
-      // Decode URL-safe Base64
       let base64 = encryptedCode.replace(/-/g, '+').replace(/_/g, '/');
       while (base64.length % 4) base64 += '=';
       const jsonStr = decodeURIComponent(escape(atob(base64)));
@@ -41,7 +40,6 @@ function initPersonalization() {
       console.warn("Could not decrypt invite token", e);
     }
   } else {
-    // Fallback if plain params used
     if (plainTo) recipientName = plainTo.trim();
     if (plainFrom) senderName = plainFrom.trim();
   }
@@ -57,14 +55,14 @@ function initPersonalization() {
 }
 
 /* ==========================================================================
-   2. Animated Cat Controller (Kindchenschema Psychology)
+   2. Hanging Cat Controller
    ========================================================================== */
 let catState = 'peeking'; // 'peeking', 'happy', 'sad', 'crying', 'celebrate'
 let isAnswered = false;
 let dodgeCount = 0;
 let isDodging = false;
+let hasStolenNo = false;
 
-// Simple words without "Sorry"
 const SIMPLE_WORDS = [
   "Wait...",
   "Please?",
@@ -74,15 +72,24 @@ const SIMPLE_WORDS = [
   "Please!"
 ];
 
+const THIEF_LINES = [
+  "Mine! You can't click No!",
+  "Nope! I ran away with it!",
+  "Dandiya rules: No 'No' allowed!",
+  "Look at my cute face!",
+  "Say YES instead!"
+];
+
 function initCatAnimations() {
-  const catStage = document.getElementById('cat-stage');
+  const catWrapper = document.getElementById('hanging-cat-wrapper');
+  const catStage = document.getElementById('cat-svg');
   const leftEar = document.getElementById('ear-left');
   const pupilRight = document.getElementById('pupil-right');
 
   // Set initial state
   applyCatState('peeking', 'Please?');
 
-  // Organic blinking loop (every 3.6s)
+  // Blinking loop (every 3.6s)
   setInterval(() => {
     if (catState === 'peeking') {
       catStage.classList.add('blinking');
@@ -90,7 +97,7 @@ function initCatAnimations() {
     }
   }, 3600);
 
-  // Playful ear twitch
+  // Random ear twitch
   setInterval(() => {
     if (Math.random() > 0.4 && leftEar) {
       leftEar.classList.add('twitch');
@@ -98,11 +105,11 @@ function initCatAnimations() {
     }
   }, 4400);
 
-  // Dynamic Eye Pupil Tracking & Natural Paw Peeking
+  // Dynamic Eye Pupil Tracking
   document.addEventListener('mousemove', (e) => {
     if (isAnswered) return;
 
-    const catRect = catStage.getBoundingClientRect();
+    const catRect = catWrapper.getBoundingClientRect();
     const catCenterX = catRect.left + catRect.width / 2;
     const catCenterY = catRect.top + catRect.height / 2;
 
@@ -112,12 +119,11 @@ function initCatAnimations() {
     const pupilX = Math.cos(angle) * dist;
     const pupilY = Math.sin(angle) * dist;
 
-    // Move the visible right pupil to track the cursor
     if (pupilRight && (catState === 'peeking' || catState === 'sad')) {
       pupilRight.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
     }
 
-    // When cursor moves, the right paw parts softly to peek through!
+    // Right paw gently shifts over the ledge to peek down
     if (catState === 'peeking') {
       catStage.classList.add('peek-open');
       clearTimeout(window._peekTimer);
@@ -134,7 +140,7 @@ function applyCatState(state, word) {
   if (isAnswered && state !== 'celebrate') return;
   catState = state;
 
-  const catStage = document.getElementById('cat-stage');
+  const catStage = document.getElementById('cat-svg');
   const normalEyes = document.getElementById('normal-eyes');
   const happyEyes = document.getElementById('happy-eyes');
   const sadEyes = document.getElementById('sad-eyes');
@@ -147,7 +153,7 @@ function applyCatState(state, word) {
   catStage.classList.remove('cat-state-peeking', 'cat-state-happy', 'cat-state-sad', 'cat-state-crying', 'cat-state-celebrate');
   catStage.classList.add(`cat-state-${state}`);
 
-  // Switch eye visuals
+  // Switch eye & mouth visuals
   if (state === 'happy' || state === 'celebrate') {
     normalEyes.classList.add('hidden');
     sadEyes.classList.add('hidden');
@@ -174,7 +180,7 @@ function applyCatState(state, word) {
     mouthNormal.classList.remove('hidden');
   }
 
-  // Animate simple word transition
+  // Update simple word
   if (wordEl && word) {
     wordEl.style.opacity = '0';
     wordEl.style.transform = 'translateY(4px)';
@@ -187,12 +193,13 @@ function applyCatState(state, word) {
 }
 
 /* ==========================================================================
-   3. 100% Collision-Free 'No' Button Evasion
-   - Strictly guaranteed NEVER to overlap the 'Yes' button or center text
+   3. Cat Grabs the 'No' Button and Runs Away!
    ========================================================================== */
 function initInteractions() {
   const btnYes = document.getElementById('btn-yes');
   const btnNo = document.getElementById('btn-no');
+  const catThief = document.getElementById('cat-thief');
+  const thiefSpeech = catThief.querySelector('.thief-speech');
   const card = document.getElementById('invite-card');
 
   // Hovering over YES button
@@ -206,116 +213,176 @@ function initInteractions() {
     }
   });
 
-  // Approaching NO button
+  // Approaching NO button -> Trigger Cat Snatch & Run Away!
   document.addEventListener('mousemove', (e) => {
     if (isAnswered || isDodging) return;
 
-    const rect = btnNo.getBoundingClientRect();
-    const btnCenterX = rect.left + rect.width / 2;
-    const btnCenterY = rect.top + rect.height / 2;
+    if (!hasStolenNo) {
+      const rect = btnNo.getBoundingClientRect();
+      const btnCenterX = rect.left + rect.width / 2;
+      const btnCenterY = rect.top + rect.height / 2;
+      const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
 
-    const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
+      if (dist < 85) {
+        snatchNoButton(e.clientX, e.clientY);
+      }
+    } else {
+      // The cat is already holding No: if cursor approaches the cat thief, it scurries away!
+      const thiefRect = catThief.getBoundingClientRect();
+      const thiefCenterX = thiefRect.left + thiefRect.width / 2;
+      const thiefCenterY = thiefRect.top + thiefRect.height / 2;
+      const dist = Math.hypot(e.clientX - thiefCenterX, e.clientY - thiefCenterY);
 
-    if (dist < 85) {
-      evadeNoButton(e.clientX, e.clientY);
+      if (dist < 90) {
+        scurryCatThief(e.clientX, e.clientY);
+      }
     }
   });
 
   btnNo.addEventListener('mouseenter', (e) => {
     e.preventDefault();
-    if (!isDodging) evadeNoButton(e.clientX, e.clientY);
+    if (!isDodging) snatchNoButton(e.clientX, e.clientY);
   });
 
-  // Mobile Touch Support
   btnNo.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
-    if (!isDodging) evadeNoButton(touch.clientX, touch.clientY);
+    if (!isDodging) snatchNoButton(touch.clientX, touch.clientY);
   });
 
-  btnNo.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (!isDodging) evadeNoButton();
-  });
+  // Dynamic Peripheral Perches for the Cat Thief (Zero chance of overlapping YES)
+  function getThiefPerches() {
+    const w = card.offsetWidth;
+    const h = card.offsetHeight;
+    const thiefW = 120;
+    const thiefH = 85;
 
-  // Defined safe peripheral stations around the card boundary
-  // Note: 'Yes' button is strictly in the center bottom of the card.
-  // These stations are anchored strictly to the left & right margins,
-  // making it physically impossible to collide with 'Yes' or center text!
-  const PERIPHERAL_STATIONS = [
-    { name: 'bottom-left',  style: { left: '26px', right: 'auto', top: 'auto', bottom: '24px' } },
-    { name: 'bottom-right', style: { left: 'auto', right: '26px', top: 'auto', bottom: '24px' } },
-    { name: 'mid-left',     style: { left: '20px', right: 'auto', top: '56%',  bottom: 'auto' } },
-    { name: 'mid-right',    style: { left: 'auto', right: '20px', top: '56%',  bottom: 'auto' } },
-    { name: 'upper-left',   style: { left: '20px', right: 'auto', top: '38%',  bottom: 'auto' } },
-    { name: 'upper-right',  style: { left: 'auto', right: '20px', top: '38%',  bottom: 'auto' } }
-  ];
+    return [
+      { left: 16, top: 16 },                                       // Top-left corner
+      { left: Math.max(16, w - thiefW - 16), top: 16 },            // Top-right corner
+      { left: 14, top: Math.max(20, h - thiefH - 18) },            // Bottom-left corner
+      { left: Math.max(16, w - thiefW - 14), top: Math.max(20, h - thiefH - 18) }, // Bottom-right corner
+      { left: -12, top: Math.max(18, Math.floor(h * 0.42) - 25) }, // Left edge perimeter
+      { left: Math.max(16, w - thiefW + 12), top: Math.max(18, Math.floor(h * 0.42) - 25) } // Right edge perimeter
+    ];
+  }
 
-  let currentStationIndex = -1;
+  let currentPerchIndex = -1;
+  let currentX = 0;
 
-  function evadeNoButton(cursorX, cursorY) {
+  function snatchNoButton(cursorX, cursorY) {
     if (isAnswered || isDodging) return;
     isDodging = true;
-
+    hasStolenNo = true;
     dodgeCount++;
+
+    // Hide original No button
+    btnNo.style.opacity = '0';
+    btnNo.style.pointerEvents = 'none';
+
+    // Update cat reaction & word
     const nextWord = SIMPLE_WORDS[(dodgeCount - 1) % SIMPLE_WORDS.length];
     applyCatState('sad', nextWord);
 
-    // Make button absolute relative to the card container
-    btnNo.classList.add('dodging-active');
+    // Initial position of cat thief directly over where No was
+    const cardRect = card.getBoundingClientRect();
+    const noRect = btnNo.getBoundingClientRect();
+    const initialX = Math.round(noRect.left - cardRect.left - 20);
+    const initialY = Math.round(noRect.top - cardRect.top - 20);
+
+    currentX = initialX;
+    catThief.style.left = `${initialX}px`;
+    catThief.style.top = `${initialY}px`;
+    catThief.classList.remove('hidden');
+
+    // Run away after a tiny instant snatch!
+    setTimeout(() => {
+      isDodging = false;
+      scurryCatThief(cursorX, cursorY);
+    }, 120);
+
+    // YES button scales larger
+    const yesScale = Math.min(1 + dodgeCount * 0.08, 1.45);
+    btnYes.style.transform = `scale(${yesScale})`;
+  }
+
+  function scurryCatThief(cursorX, cursorY) {
+    if (isAnswered || isDodging) return;
+    isDodging = true;
+    dodgeCount++;
+
+    const nextWord = SIMPLE_WORDS[(dodgeCount - 1) % SIMPLE_WORDS.length];
+    applyCatState('sad', nextWord);
+
+    if (thiefSpeech) {
+      thiefSpeech.textContent = THIEF_LINES[(dodgeCount - 1) % THIEF_LINES.length];
+    }
 
     const cardRect = card.getBoundingClientRect();
+    const perches = getThiefPerches();
+    const candidates = perches.map((p, i) => ({ ...p, i })).filter(p => p.i !== currentPerchIndex);
 
-    // Pick candidate stations that are different from the current station
-    let candidates = PERIPHERAL_STATIONS.map((st, idx) => ({ ...st, idx })).filter(st => st.idx !== currentStationIndex);
-
-    // If mouse coordinates are available, pick the station furthest from the cursor
-    let bestStation = candidates[0];
+    // Pick perch furthest from cursor
+    let bestPerch = candidates[0];
     if (cursorX !== undefined && cursorY !== undefined) {
       let maxDist = -1;
-      for (const st of candidates) {
-        // Estimate station coordinates in viewport
-        let estX = st.style.left !== 'auto' ? cardRect.left + 50 : cardRect.right - 50;
-        let estY = cardRect.bottom - 40;
-        if (st.style.top === '56%') estY = cardRect.top + cardRect.height * 0.56;
-        if (st.style.top === '38%') estY = cardRect.top + cardRect.height * 0.38;
-
+      for (const p of candidates) {
+        const estX = cardRect.left + p.left + 60;
+        const estY = cardRect.top + p.top + 45;
         const d = Math.hypot(cursorX - estX, cursorY - estY);
         if (d > maxDist) {
           maxDist = d;
-          bestStation = st;
+          bestPerch = p;
         }
       }
     } else {
-      bestStation = candidates[Math.floor(Math.random() * candidates.length)];
+      bestPerch = candidates[Math.floor(Math.random() * candidates.length)];
     }
 
-    currentStationIndex = bestStation.idx;
+    currentPerchIndex = bestPerch.i;
 
-    // Apply clean station styling
-    btnNo.style.position = 'absolute';
-    btnNo.style.left = bestStation.style.left;
-    btnNo.style.right = bestStation.style.right;
-    btnNo.style.top = bestStation.style.top;
-    btnNo.style.bottom = bestStation.style.bottom;
-    btnNo.style.transform = 'none';
+    // Turn sprite to face running direction
+    const thiefSvg = catThief.querySelector('.thief-svg');
+    if (thiefSvg) {
+      if (bestPerch.left < currentX) {
+        thiefSvg.style.transform = 'scaleX(-1)';
+      } else {
+        thiefSvg.style.transform = 'scaleX(1)';
+      }
+    }
+    currentX = bestPerch.left;
 
-    // YES button subtly scales larger with each attempt
+    // Scurry to the new spot!
+    catThief.style.left = `${bestPerch.left}px`;
+    catThief.style.top = `${bestPerch.top}px`;
+
+    // Scale up YES button
     const yesScale = Math.min(1 + dodgeCount * 0.08, 1.45);
     btnYes.style.transform = `scale(${yesScale})`;
 
-    // Debounce to eliminate hover loops
     setTimeout(() => {
       isDodging = false;
-    }, 260);
+    }, 320);
   }
+
+  // If user tries to click the cat thief holding No
+  catThief.addEventListener('click', (e) => {
+    e.preventDefault();
+    scurryCatThief(e.clientX, e.clientY);
+  });
+
+  catThief.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    scurryCatThief(touch.clientX, touch.clientY);
+  });
 
   // Clicking YES (Victory!)
   btnYes.addEventListener('click', () => {
     handleVictory();
   });
 
-  // Exit Intent Detection (Top-Right Corner / Closing Window)
+  // Exit Intent Detection (Top-Right Window Corner)
   document.addEventListener('mousemove', (e) => {
     if (isAnswered) return;
 
@@ -339,9 +406,12 @@ function handleVictory() {
   isAnswered = true;
   applyCatState('celebrate', 'Yay!');
 
-  // Hide button arena and show celebration view
+  // Hide the cat thief and buttons
+  const catThief = document.getElementById('cat-thief');
   const arena = document.getElementById('button-arena');
   const celebration = document.getElementById('celebration-container');
+
+  if (catThief) catThief.classList.add('hidden');
   if (arena) arena.style.display = 'none';
   if (celebration) celebration.style.display = 'block';
 

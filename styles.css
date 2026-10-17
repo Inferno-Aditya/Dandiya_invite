@@ -1,18 +1,18 @@
 /* ==========================================================================
    Dandiya Partner Invite - Minimalist Animated Theme
    Engineered with the 'animate' skill:
-   - Realistic Disney/Pixar-level organic kitten animation
-   - Kindchenschema (Baby Schema) psychological cuteness triggers
+   - Cat looking from above the box (hanging over the rim)
+   - Dynamic Cat Thief: grabs the 'No' button and runs away with it!
+   - Kindchenschema psychological cuteness triggers
    - Flowing translucent tear cascades (No static sweat drops!)
-   - Quivering lip, glassy pupils, and breathing physics
-   - Mathematical 100% collision-free 'No' button evasion
+   - Custom browser tab favicon
    - Zero Unicode emojis
    ========================================================================== */
 
 :root {
   --bg-deep: #080d1a;
-  --bg-card: rgba(13, 20, 38, 0.78);
-  --card-border: rgba(255, 215, 0, 0.22);
+  --bg-card: rgba(13, 20, 38, 0.82);
+  --card-border: rgba(255, 215, 0, 0.25);
   --gold-primary: #f5c542;
   --gold-bright: #ffd54f;
   --gold-glow: rgba(245, 197, 66, 0.35);
@@ -25,7 +25,6 @@
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *, *::before, *::after {
@@ -52,7 +51,7 @@ body {
   position: relative;
   background: radial-gradient(circle at 50% 30%, #152247 0%, #080d1a 70%, #04070e 100%);
   min-height: 100vh;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
 }
 
 /* Ambient Canvas Background */
@@ -97,7 +96,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* Main Card */
+/* Main Box Structure */
 .card-container {
   position: relative;
   z-index: 10;
@@ -106,53 +105,36 @@ body {
   margin: auto;
 }
 
-.invite-card {
+.box-wrapper {
   position: relative;
-  background: var(--bg-card);
-  border: 1.5px solid var(--card-border);
-  border-radius: 34px;
-  padding: 2.2rem 2rem 2.5rem;
-  text-align: center;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px var(--gold-glow);
-  overflow: visible;
+  margin-top: 95px; /* Ample space for the hanging cat peeking from above the box */
 }
 
 /* ==========================================================================
-   Animated SVG Cat Stage & Kindchenschema Visuals
+   Hanging Cat Over the Box
    ========================================================================== */
-.cat-stage {
-  position: relative;
-  width: 230px;
-  height: 230px;
-  margin: 0 auto 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.hanging-cat-wrapper {
+  position: absolute;
+  top: -115px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  height: 160px;
+  z-index: 25;
+  pointer-events: none;
+  transition: transform 0.3s var(--ease-spring);
 }
 
 .cat-svg {
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.5));
-}
-
-/* Subtle Idle Breathing on Cat Body */
-.cat-torso {
-  transform-origin: 140px 220px;
-  animation: catBreath 3.6s ease-in-out infinite;
-}
-
-@keyframes catBreath {
-  0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(1.02, 1.028); }
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.55));
 }
 
 /* Natural Tail Swishing with Momentum */
 .cat-tail {
-  transform-origin: 75px 220px;
+  transform-origin: 65px 140px;
   animation: tailSway 3.4s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
@@ -165,8 +147,8 @@ body {
 .cat-ear {
   transition: transform 0.35s var(--ease-spring);
 }
-.ear-left { transform-origin: 72px 108px; }
-.ear-right { transform-origin: 208px 108px; }
+.ear-left { transform-origin: 72px 82px; }
+.ear-right { transform-origin: 208px 82px; }
 
 .cat-ear.twitch {
   animation: earTwitch 0.4s ease-in-out;
@@ -194,8 +176,8 @@ body {
 .cat-eyebrows .brow {
   transition: transform 0.3s var(--ease-spring);
 }
-.brow-left { transform-origin: 108px 100px; }
-.brow-right { transform-origin: 172px 100px; }
+.brow-left { transform-origin: 108px 74px; }
+.brow-right { transform-origin: 172px 74px; }
 
 .cat-state-sad .brow-left, .cat-state-crying .brow-left {
   transform: rotate(12deg) translateY(2px);
@@ -217,7 +199,7 @@ body {
 
 /* Organic Blinking */
 .eyelid {
-  transform-origin: 50% 105px;
+  transform-origin: 50% 80px;
   transform: scaleY(0);
   transition: transform 0.08s ease-in-out;
 }
@@ -231,7 +213,7 @@ body {
   transition: transform 0.06s linear;
 }
 
-/* Flowing Translucent Tear Cascades (Realistic Waterfall Flow, NOT a Sweat Blob) */
+/* Flowing Translucent Tear Cascades */
 .tear-cascade-left, .tear-cascade-right {
   animation: tearCascade 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
@@ -241,21 +223,10 @@ body {
 }
 
 @keyframes tearCascade {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px) scale(0.65);
-  }
-  25% {
-    opacity: 0.95;
-  }
-  75% {
-    opacity: 0.95;
-    transform: translateY(16px) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(28px) scale(1.15);
-  }
+  0% { opacity: 0; transform: translateY(-4px) scale(0.65); }
+  25% { opacity: 0.95; }
+  75% { opacity: 0.95; transform: translateY(16px) scale(1); }
+  100% { opacity: 0; transform: translateY(28px) scale(1.15); }
 }
 
 /* Quivering Sad Lower Lip */
@@ -268,90 +239,53 @@ body {
   100% { transform: translateY(1.5px); }
 }
 
-/* ==========================================================================
-   Paw & Arm Kinematics (Natural, Connected, Hugging Face)
-   ========================================================================== */
+/* Paws Clutching the Rim of the Box */
 .cat-paw {
   transition: transform 0.35s var(--ease-spring);
 }
 
-.paw-left { transform-origin: 85px 180px; }
-.paw-right { transform-origin: 195px 180px; }
+.paw-left { transform-origin: 98px 148px; }
+.paw-right { transform-origin: 182px 148px; }
 
-/* State 1: Peeking (Default)
-   - Left arm & paw gently hugs and covers the left eye
-   - Right arm & paw rests gently near cheek with parted fingers peeking! */
-.cat-state-peeking .paw-left {
-  transform: translate(0, 0) rotate(0deg);
-}
+/* Peeking: Paws hooked over the rim */
+.cat-state-peeking .paw-left { transform: translate(0, 0); }
+.cat-state-peeking .paw-right { transform: translate(0, 0); }
 
-.cat-state-peeking .paw-right {
-  transform: translate(0, 0) rotate(0deg);
-}
-
-/* State 1b: Peek Open (Mouse moves -> Right paw parts smoothly with a tilt to peek!) */
+/* Peek Open: Right paw gently wiggles to peek down */
 .cat-state-peeking.peek-open .paw-right {
-  transform: translate(10px, 8px) rotate(14deg);
+  transform: translate(2px, -3px) rotate(5deg);
 }
 
-/* State 2: Happy (Both paws drop to chest in a joyful clapping bounce) */
-.cat-state-happy .paw-left {
-  transform: translateY(32px) rotate(22deg);
-}
-.cat-state-happy .paw-right {
-  transform: translateY(30px) rotate(-20deg);
-}
+/* Happy: Both paws tap the rim excitedly in celebration */
+.cat-state-happy .paw-left { transform: translateY(-8px) rotate(10deg); }
+.cat-state-happy .paw-right { transform: translateY(-8px) rotate(-10deg); }
 
-/* State 3: Sad / Pleading (Paws clasp together near chest and tremble) */
-.cat-state-sad .paw-left {
-  transform: translateY(22px) rotate(-6deg);
-  animation: pawPleaTremble 0.22s infinite alternate ease-in-out;
-}
-.cat-state-sad .paw-right {
-  transform: translateY(22px) rotate(6deg);
-  animation: pawPleaTremble 0.22s 0.11s infinite alternate ease-in-out;
-}
+/* Sad / Pleading */
+.cat-state-sad .paw-left { transform: translateY(4px); }
+.cat-state-sad .paw-right { transform: translateY(4px); }
 
-@keyframes pawPleaTremble {
-  0% { transform: translateY(21px); }
-  100% { transform: translateY(24px); }
-}
+/* Crying / Panic (Holding cheeks above rim) */
+.cat-state-crying .paw-left { transform: translateY(-26px) rotate(-22deg); }
+.cat-state-crying .paw-right { transform: translateY(-26px) rotate(22deg); }
 
-/* State 4: Crying / Panic (Both paws rush up to cheeks in shock) */
-.cat-state-crying .paw-left {
-  transform: translateY(-6px) rotate(-14deg);
-}
-.cat-state-crying .paw-right {
-  transform: translateY(-18px) rotate(16deg);
-}
-
-/* State 5: Celebrate Victory Dance (Paws wave in air!) */
+/* Celebrate: Paws wave high above the box! */
 .cat-state-celebrate .paw-left {
-  transform: translateY(-42px) rotate(-42deg);
+  transform: translateY(-48px) rotate(-40deg);
   animation: victoryPawLeft 0.5s ease-in-out infinite alternate;
 }
 .cat-state-celebrate .paw-right {
-  transform: translateY(-44px) rotate(42deg);
+  transform: translateY(-50px) rotate(40deg);
   animation: victoryPawRight 0.5s 0.25s ease-in-out infinite alternate;
 }
 
 @keyframes victoryPawLeft {
-  0% { transform: translateY(-42px) rotate(-42deg); }
-  100% { transform: translateY(-50px) rotate(-22deg); }
+  0% { transform: translateY(-48px) rotate(-40deg); }
+  100% { transform: translateY(-56px) rotate(-22deg); }
 }
 
 @keyframes victoryPawRight {
-  0% { transform: translateY(-44px) rotate(42deg); }
-  100% { transform: translateY(-52px) rotate(22deg); }
-}
-
-.cat-state-celebrate #cat-head-group {
-  animation: headBob 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes headBob {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-6px); }
+  0% { transform: translateY(-50px) rotate(40deg); }
+  100% { transform: translateY(-58px) rotate(22deg); }
 }
 
 .hidden {
@@ -359,11 +293,35 @@ body {
 }
 
 /* ==========================================================================
-   Minimalist Emotion Word
+   The Main Box / Card
    ========================================================================== */
+.invite-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1.5px solid var(--card-border);
+  border-radius: 32px;
+  padding: 2.2rem 2rem 2.6rem;
+  text-align: center;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px var(--gold-glow);
+  overflow: visible;
+}
+
+/* Top Ledge Glow Rim */
+.box-ledge-rim {
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 5%, #f5c542 50%, transparent 95%);
+  border-radius: 4px;
+  margin-bottom: 1.4rem;
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* Minimalist Emotion Word */
 .emotion-word-wrapper {
   min-height: 28px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .emotion-word {
@@ -382,7 +340,7 @@ body {
   font-weight: 700;
   line-height: 1.35;
   color: #ffffff;
-  margin-bottom: 2rem;
+  margin-bottom: 2.4rem;
   padding: 0 0.5rem;
 }
 
@@ -397,11 +355,11 @@ body {
 }
 
 /* ==========================================================================
-   Buttons Arena (Mathematically Guaranteed Zero-Overlap)
+   Buttons Arena
    ========================================================================== */
 .button-arena {
   position: relative;
-  min-height: 90px;
+  min-height: 95px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -413,7 +371,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.85rem 2.3rem;
+  padding: 0.9rem 2.4rem;
   font-family: var(--font-sans);
   font-size: 1.05rem;
   font-weight: 700;
@@ -426,7 +384,7 @@ body {
   transition: transform 0.22s var(--ease-spring), box-shadow 0.2s var(--ease-out), background 0.25s var(--ease-out);
 }
 
-/* Yes Button - Stable Center */
+/* Yes Button - Centered Hero */
 .btn-yes {
   background: linear-gradient(135deg, #f5c542 0%, #ff8f00 100%);
   color: #070b16;
@@ -437,12 +395,12 @@ body {
 
 @media (hover: hover) and (pointer: fine) {
   .btn-yes:hover {
-    transform: scale(1.08);
-    box-shadow: 0 8px 30px rgba(245, 197, 66, 0.65);
+    transform: scale(1.1);
+    box-shadow: 0 8px 32px rgba(245, 197, 66, 0.7);
   }
 }
 
-/* No Button - Zero Overlap Peripheral Evasion */
+/* No Button */
 .btn-no {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-dim);
@@ -450,19 +408,53 @@ body {
   backdrop-filter: blur(8px);
   position: relative;
   z-index: 10;
-  transition: transform 0.32s var(--ease-out), left 0.32s var(--ease-out), top 0.32s var(--ease-out);
-  will-change: transform, left, top;
+  transition: transform 0.3s var(--ease-out), opacity 0.25s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .btn-no:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-}
-
-/* When dodging is active, No button detaches cleanly to peripheral positions */
-.btn-no.dodging-active {
+/* ==========================================================================
+   Cat Thief Animation (Grabs 'No' button and runs away!)
+   ========================================================================== */
+.cat-thief {
   position: absolute;
+  width: 140px;
+  height: 110px;
+  z-index: 30;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: left 0.45s cubic-bezier(0.34, 1.3, 0.64, 1), top 0.45s cubic-bezier(0.34, 1.3, 0.64, 1), transform 0.3s var(--ease-spring);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
+}
+
+.thief-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.running-paws {
+  animation: pitterPatter 0.22s infinite alternate ease-in-out;
+}
+
+@keyframes pitterPatter {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+.thief-speech {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 21, 41, 0.95);
+  border: 1px solid var(--gold-primary);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
 /* ==========================================================================
@@ -634,10 +626,7 @@ body {
 
 /* Reduced Motion Handling */
 @media (prefers-reduced-motion: reduce) {
-  .cat-tail, .cat-torso, .tear-cascade-left, .tear-cascade-right, .mouth-tremble, .cat-state-celebrate .paw-left, .cat-state-celebrate .paw-right {
+  .cat-tail, .tear-cascade-left, .tear-cascade-right, .mouth-tremble, .cat-state-celebrate .paw-left, .cat-state-celebrate .paw-right {
     animation: none !important;
-  }
-  .cat-paw, .btn-no {
-    transition: transform 0.05s linear !important;
   }
 }
