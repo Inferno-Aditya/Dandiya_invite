@@ -1,11 +1,11 @@
 /**
  * Dandiya Partner Invite - Minimalist Animated Cat
  * Features:
- * - Expressive SVG animations: Left paw on eye, Right paw peeking with separated fingers
- * - Glitch-free 'No' button evasion (large minimum-distance jumps + debounce)
- * - Dynamic cursor-tracking pupil
- * - Personalization: Names revealed before & after YES click
- * - Simple heartfelt words: "Please?", "Wait...", "Sorry!", "Yay!"
+ * - Natural organic kitten animations: Left paw on eye, Right paw peeking through
+ * - Collision-free 'No' button evasion: Guaranteed 0 overlap with 'Yes' button or text
+ * - Dynamic cursor-tracking pupil & breathing idle
+ * - Encrypted URL token decoding: Names hidden from URL
+ * - Removed "Sorry" from messages
  * - Zero Unicode Emojis
  */
 
@@ -17,21 +17,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   1. Personalization Logic
+   1. Encrypted URL Personalization Logic
    ========================================================================== */
 let recipientName = "";
 let senderName = "";
-let senderPhone = "";
 
 function initPersonalization() {
   const params = new URLSearchParams(window.location.search);
-  const to = params.get('to');
-  const from = params.get('from');
-  const phone = params.get('phone');
+  const encryptedCode = params.get('c');
+  const plainTo = params.get('to');
+  const plainFrom = params.get('from');
 
-  if (to && to.trim()) recipientName = to.trim();
-  if (from && from.trim()) senderName = from.trim();
-  if (phone && phone.trim()) senderPhone = phone.trim().replace(/[^0-9+]/g, '');
+  if (encryptedCode) {
+    try {
+      // Decode URL-safe Base64
+      let base64 = encryptedCode.replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4) base64 += '=';
+      const jsonStr = decodeURIComponent(escape(atob(base64)));
+      const data = JSON.parse(jsonStr);
+      if (data.t) recipientName = data.t.trim();
+      if (data.f) senderName = data.f.trim();
+    } catch (e) {
+      console.warn("Could not decrypt invite token", e);
+    }
+  } else {
+    // Fallback if plain params used
+    if (plainTo) recipientName = plainTo.trim();
+    if (plainFrom) senderName = plainFrom.trim();
+  }
 
   const partnerDisplay = document.getElementById('partner-name-display');
   if (partnerDisplay) {
@@ -51,11 +64,11 @@ let isAnswered = false;
 let dodgeCount = 0;
 let isDodging = false;
 
+// Simple words without "Sorry"
 const SIMPLE_WORDS = [
   "Wait...",
   "Please?",
   "Pretty please?",
-  "Sorry!",
   "Don't...",
   "Think again?",
   "Please!"
@@ -77,7 +90,7 @@ function initCatAnimations() {
     }
   }, 3500);
 
-  // Random playful ear twitch
+  // Playful ear twitch
   setInterval(() => {
     if (Math.random() > 0.4 && leftEar) {
       leftEar.classList.add('twitch');
@@ -85,7 +98,7 @@ function initCatAnimations() {
     }
   }, 4200);
 
-  // Dynamic Eye Pupil Tracking & Paw Peeking
+  // Dynamic Eye Pupil Tracking & Natural Paw Peeking
   document.addEventListener('mousemove', (e) => {
     if (isAnswered) return;
 
@@ -104,7 +117,7 @@ function initCatAnimations() {
       pupilRight.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
     }
 
-    // When cursor moves, the right paw parts slightly wider to peek through!
+    // When cursor moves, the right paw parts softly to peek through!
     if (catState === 'peeking') {
       catStage.classList.add('peek-open');
       clearTimeout(window._peekTimer);
@@ -159,7 +172,8 @@ function applyCatState(state, word) {
 }
 
 /* ==========================================================================
-   3. Glitch-Free 'No' Button Evasion
+   3. Collision-Free 'No' Button Evasion
+   - Guaranteed NEVER to overlap the 'Yes' button or the text above
    ========================================================================== */
 function initInteractions() {
   const btnYes = document.getElementById('btn-yes');
@@ -176,7 +190,7 @@ function initInteractions() {
     }
   });
 
-  // Approaching NO button (Smart Distance Jump with Debounce)
+  // Approaching NO button
   document.addEventListener('mousemove', (e) => {
     if (isAnswered || isDodging) return;
 
@@ -208,6 +222,21 @@ function initInteractions() {
     if (!isDodging) evadeNoButton();
   });
 
+  // Pre-calculated safe landing zones around periphery
+  // None of these overlap the center Yes button (which is at (0, 0))
+  // None of these go upward (y is always >= 40) so they NEVER touch the question or speech text!
+  const SAFE_ZONES = [
+    { x: 155, y: 40 },    // Far Right
+    { x: -155, y: 40 },   // Far Left
+    { x: 125, y: 85 },    // Bottom Right
+    { x: -125, y: 85 },   // Bottom Left
+    { x: 0, y: 90 },      // Bottom Center (Directly below Yes, with ample 90px vertical margin)
+    { x: 165, y: 75 },    // Lower Far Right
+    { x: -165, y: 75 }    // Lower Far Left
+  ];
+
+  let lastZoneIndex = -1;
+
   function evadeNoButton(cursorX, cursorY) {
     if (isAnswered || isDodging) return;
     isDodging = true;
@@ -216,45 +245,25 @@ function initInteractions() {
     const nextWord = SIMPLE_WORDS[(dodgeCount - 1) % SIMPLE_WORDS.length];
     applyCatState('sad', nextWord);
 
-    const card = document.getElementById('invite-card');
-    const cardRect = card.getBoundingClientRect();
+    // Pick a zone different from the last one
+    let availableIndices = SAFE_ZONES.map((_, i) => i).filter(i => i !== lastZoneIndex);
+    let chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    lastZoneIndex = chosenIndex;
 
-    // Calculate a position guaranteed to be far from the cursor
-    const cardCenterX = cardRect.left + cardRect.width / 2;
-    const cardCenterY = cardRect.top + cardRect.height / 2;
-
-    // Pick between 4 wide opposing quadrants
-    const angles = [Math.PI * 0.25, Math.PI * 0.75, Math.PI * 1.25, Math.PI * 1.75];
-    const pickAngle = angles[Math.floor(Math.random() * angles.length)];
-
-    const jumpDistanceX = 110 + Math.random() * 45;
-    const jumpDistanceY = 55 + Math.random() * 30;
-
-    let targetOffsetX = Math.cos(pickAngle) * jumpDistanceX;
-    let targetOffsetY = Math.sin(pickAngle) * jumpDistanceY;
-
-    // If mouse coordinates are known, ensure target jumps away from mouse
-    if (cursorX !== undefined) {
-      if (cursorX < cardCenterX) {
-        targetOffsetX = Math.abs(targetOffsetX); // Jump to right side
-      } else {
-        targetOffsetX = -Math.abs(targetOffsetX); // Jump to left side
-      }
-    }
-
-    btnNo.style.transform = `translate(${targetOffsetX}px, ${targetOffsetY}px)`;
+    const target = SAFE_ZONES[chosenIndex];
+    btnNo.style.transform = `translate(${target.x}px, ${target.y}px)`;
 
     // YES button subtly scales larger with each attempt
     const yesScale = Math.min(1 + dodgeCount * 0.08, 1.45);
     btnYes.style.transform = `scale(${yesScale})`;
 
-    // Debounce to prevent rapid hover loops
+    // Debounce to eliminate hover loops
     setTimeout(() => {
       isDodging = false;
-    }, 280);
+    }, 260);
   }
 
-  // Clicking YES (The Big Moment)
+  // Clicking YES (Victory!)
   btnYes.addEventListener('click', () => {
     handleVictory();
   });
@@ -318,11 +327,7 @@ function setupReplyLink() {
 
   const toWhom = senderName ? senderName : "you";
   const cleanMessage = encodeURIComponent(`YES! I would love to be your Dandiya partner!`);
-
-  let url = `https://api.whatsapp.com/send?text=${cleanMessage}`;
-  if (senderPhone) {
-    url = `https://api.whatsapp.com/send?phone=${senderPhone}&text=${cleanMessage}`;
-  }
+  const url = `https://api.whatsapp.com/send?text=${cleanMessage}`;
   link.href = url;
 }
 

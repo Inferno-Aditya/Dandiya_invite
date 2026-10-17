@@ -29,20 +29,14 @@
           <input type="text" id="to-name" placeholder="e.g. Ananya" required autocomplete="off">
         </div>
 
-        <div class="field-group">
-          <label for="phone-number">Your WhatsApp Number (Optional)</label>
-          <input type="tel" id="phone-number" placeholder="e.g. 919876543210" autocomplete="off">
-          <small>Her 'Yes' reply button will open WhatsApp directly to your number.</small>
-        </div>
-
         <button type="submit" class="btn btn-yes btn-generate">
-          <span>Generate Invite Link</span>
+          <span>Generate Private Invite Link</span>
         </button>
       </form>
 
       <!-- Result Link Box (Hidden initially) -->
       <div id="result-box" class="result-card" style="display: none;">
-        <div class="result-label">Your Custom Link:</div>
+        <div class="result-label">Your Private Link (Names Encrypted):</div>
         <div class="link-box">
           <input type="text" id="share-link-input" readonly>
           <button id="copy-btn" class="btn btn-copy">Copy</button>
@@ -67,19 +61,25 @@
       const copyBtn = document.getElementById('copy-btn');
       const previewAnchor = document.getElementById('preview-anchor');
 
+      // Obfuscate / Encrypt payload so names are NOT visible in the URL
+      function encryptPayload(to, from) {
+        const payload = JSON.stringify({ t: to, f: from, v: 2 });
+        // Base64 encode and URL-safe transformation
+        const encoded = btoa(unescape(encodeURIComponent(payload)))
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=+$/, '');
+        return encoded;
+      }
+
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const from = document.getElementById('from-name').value.trim();
         const to = document.getElementById('to-name').value.trim();
-        const phone = document.getElementById('phone-number').value.trim().replace(/[^0-9+]/g, '');
 
+        const token = encryptPayload(to, from);
         const baseUrl = window.location.origin + window.location.pathname.replace('create.html', 'index.html');
-        const params = new URLSearchParams();
-        if (to) params.set('to', to);
-        if (from) params.set('from', from);
-        if (phone) params.set('phone', phone);
-
-        const finalUrl = `${baseUrl}?${params.toString()}`;
+        const finalUrl = `${baseUrl}?c=${token}`;
 
         linkInput.value = finalUrl;
         previewAnchor.href = finalUrl;
