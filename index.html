@@ -28,159 +28,285 @@
       
       <!-- Interactive Animated Cat Stage -->
       <div class="cat-stage" id="cat-stage">
-        <svg class="cat-svg" viewBox="0 0 240 240" id="cat-svg" aria-label="Cute Animated Kitten">
+        <svg class="cat-svg" viewBox="0 0 280 280" id="cat-svg" aria-label="Cute Animated Kitten">
           <defs>
-            <radialGradient id="catBodyGrad" cx="50%" cy="40%" r="60%">
+            <!-- Rich Velvet Fur Gradients -->
+            <radialGradient id="catFurHead" cx="45%" cy="40%" r="65%">
+              <stop offset="0%" stop-color="#ffcc80"/>
+              <stop offset="45%" stop-color="#ffa726"/>
+              <stop offset="80%" stop-color="#fb8c00"/>
+              <stop offset="100%" stop-color="#ef6c00"/>
+            </radialGradient>
+
+            <radialGradient id="catFurBody" cx="50%" cy="35%" r="65%">
               <stop offset="0%" stop-color="#ffb74d"/>
-              <stop offset="70%" stop-color="#ffa726"/>
-              <stop offset="100%" stop-color="#f57c00"/>
+              <stop offset="60%" stop-color="#ffa726"/>
+              <stop offset="100%" stop-color="#e65100"/>
             </radialGradient>
-            <radialGradient id="catBellyGrad" cx="50%" cy="50%" r="50%">
+
+            <!-- Velvety Cream Belly & Cheeks -->
+            <radialGradient id="catCream" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stop-color="#ffffff"/>
-              <stop offset="100%" stop-color="#fff3e0"/>
+              <stop offset="80%" stop-color="#fff8e1"/>
+              <stop offset="100%" stop-color="#ffecb3"/>
             </radialGradient>
-            <radialGradient id="eyeGrad" cx="35%" cy="35%" r="65%">
-              <stop offset="0%" stop-color="#26a69a"/>
-              <stop offset="60%" stop-color="#00695c"/>
-              <stop offset="100%" stop-color="#004d40"/>
+
+            <!-- Deep Emerald / Jade Glassy Eye Gradient -->
+            <radialGradient id="catIris" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#80cbc4"/>
+              <stop offset="35%" stop-color="#26a69a"/>
+              <stop offset="70%" stop-color="#00796b"/>
+              <stop offset="95%" stop-color="#004d40"/>
+              <stop offset="100%" stop-color="#00251a"/>
             </radialGradient>
-            <radialGradient id="blushGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="rgba(255, 64, 129, 0.75)"/>
+
+            <!-- Soft Airbrushed Cheek Blush -->
+            <radialGradient id="blushSoft" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(255, 64, 129, 0.8)"/>
+              <stop offset="60%" stop-color="rgba(255, 64, 129, 0.35)"/>
               <stop offset="100%" stop-color="rgba(255, 64, 129, 0)"/>
+            </radialGradient>
+
+            <!-- Soft Marshmallow Paw Pad Gradient -->
+            <radialGradient id="pawPadGrad" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#ff80ab"/>
+              <stop offset="65%" stop-color="#f50057"/>
+              <stop offset="100%" stop-color="#c51162"/>
+            </radialGradient>
+
+            <!-- Crystal Water Teardrop Gradient -->
+            <linearGradient id="tearStreamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(178, 235, 242, 0)"/>
+              <stop offset="30%" stop-color="rgba(77, 208, 225, 0.85)"/>
+              <stop offset="85%" stop-color="rgba(0, 188, 212, 0.95)"/>
+              <stop offset="100%" stop-color="rgba(128, 222, 234, 1)"/>
+            </linearGradient>
+
+            <!-- Soft Ambient Cat Shadow -->
+            <radialGradient id="floorShadow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(0, 0, 0, 0.45)"/>
+              <stop offset="100%" stop-color="rgba(0, 0, 0, 0)"/>
             </radialGradient>
           </defs>
 
+          <!-- Ambient Floor Shadow -->
+          <ellipse cx="140" cy="245" rx="75" ry="14" fill="url(#floorShadow)"/>
+
           <!-- Animated Tail -->
-          <path id="cat-tail" class="cat-tail" d="M 60 190 Q 30 180 25 150 Q 20 120 40 110 Q 55 105 45 130 Q 38 155 70 185 Z" fill="url(#catBodyGrad)"/>
+          <g id="cat-tail-group" class="cat-tail-group">
+            <path id="cat-tail" class="cat-tail" d="M 75 220 Q 35 210 26 175 Q 18 135 45 120 Q 62 110 52 142 Q 42 175 85 212 Z" fill="url(#catFurBody)"/>
+            <!-- Tail Tip Accent -->
+            <path d="M 32 155 Q 18 135 45 120 Q 62 110 52 142 Z" fill="#ffe082" opacity="0.85"/>
+          </g>
 
-          <!-- Body & Chest -->
+          <!-- Chubby Body & Velvety Chest -->
           <g id="cat-torso" class="cat-torso">
-            <ellipse cx="120" cy="175" rx="58" ry="48" fill="url(#catBodyGrad)"/>
-            <ellipse cx="120" cy="182" rx="36" ry="32" fill="url(#catBellyGrad)"/>
+            <!-- Torso Pear Shape -->
+            <path d="M 85 170 C 65 195, 60 230, 95 240 C 130 248, 150 248, 185 240 C 220 230, 215 195, 195 170 C 180 150, 100 150, 85 170 Z" fill="url(#catFurBody)"/>
+            <!-- White/Cream Fluffy Belly Bib -->
+            <path d="M 108 175 C 95 195, 95 228, 120 236 C 145 242, 160 236, 172 225 C 185 210, 180 185, 165 175 C 150 168, 125 168, 108 175 Z" fill="url(#catCream)"/>
+            <!-- Little Hind Paws Resting on Ground -->
+            <ellipse cx="92" cy="238" rx="14" ry="9" fill="url(#catFurBody)"/>
+            <ellipse cx="188" cy="238" rx="14" ry="9" fill="url(#catFurBody)"/>
           </g>
 
-          <!-- Left Ear -->
+          <!-- Left Ear (Softly Rounded with Fluffy Tufts) -->
           <g id="ear-left" class="cat-ear ear-left">
-            <polygon points="65,95 45,40 100,70" fill="url(#catBodyGrad)"/>
-            <polygon points="66,90 52,48 94,72" fill="#ff80ab"/>
+            <path d="M 72 108 C 60 85, 48 42, 68 38 C 88 34, 110 75, 116 88 Z" fill="url(#catFurHead)"/>
+            <path d="M 76 102 C 67 85, 58 50, 72 46 C 85 43, 103 76, 108 86 Z" fill="#ff80ab"/>
+            <!-- White Fluffy Inner Ear Hair Tufts -->
+            <path d="M 72 88 Q 82 82 85 72" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <path d="M 75 94 Q 88 88 92 80" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
           </g>
 
-          <!-- Right Ear -->
+          <!-- Right Ear (Softly Rounded with Fluffy Tufts) -->
           <g id="ear-right" class="cat-ear ear-right">
-            <polygon points="175,95 195,40 140,70" fill="url(#catBodyGrad)"/>
-            <polygon points="174,90 188,48 146,72" fill="#ff80ab"/>
+            <path d="M 208 108 C 220 85, 232 42, 212 38 C 192 34, 170 75, 164 88 Z" fill="url(#catFurHead)"/>
+            <path d="M 204 102 C 213 85, 222 50, 208 46 C 195 43, 177 76, 172 86 Z" fill="#ff80ab"/>
+            <!-- White Fluffy Inner Ear Hair Tufts -->
+            <path d="M 208 88 Q 198 82 195 72" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <path d="M 205 94 Q 192 88 188 80" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
           </g>
 
-          <!-- Head -->
+          <!-- The Head & Facial Expressions -->
           <g id="cat-head-group" class="cat-head-group">
-            <ellipse id="cat-head" cx="120" cy="115" rx="60" ry="52" fill="url(#catBodyGrad)"/>
+            <!-- Chubby Head Contour with Fluffy Cheek Tufts -->
+            <path id="cat-head" d="M 80 120 C 58 128, 52 155, 75 168 C 95 180, 185 180, 205 168 C 228 155, 222 128, 200 120 C 205 92, 165 72, 140 72 C 115 72, 75 92, 80 120 Z" fill="url(#catFurHead)"/>
 
-            <!-- Forehead Stripes -->
-            <path d="M 120 70 L 120 84" stroke="#e65100" stroke-width="3" stroke-linecap="round"/>
-            <path d="M 110 74 L 113 86" stroke="#e65100" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M 130 74 L 127 86" stroke="#e65100" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Soft Fluffy Cheek Fluff Side Tufts -->
+            <path d="M 64 145 C 52 148, 55 158, 68 156 Z" fill="url(#catFurHead)"/>
+            <path d="M 216 145 C 228 148, 225 158, 212 156 Z" fill="url(#catFurHead)"/>
 
-            <!-- Muzzle -->
-            <ellipse cx="108" cy="130" rx="15" ry="11" fill="url(#catBellyGrad)"/>
-            <ellipse cx="132" cy="130" rx="15" ry="11" fill="url(#catBellyGrad)"/>
+            <!-- Tabby Forehead Stripes -->
+            <path d="M 140 78 L 140 94" stroke="#d84315" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+            <path d="M 128 82 C 130 92, 133 96, 134 100" stroke="#d84315" stroke-width="2.6" stroke-linecap="round" opacity="0.75" fill="none"/>
+            <path d="M 152 82 C 150 92, 147 96, 146 100" stroke="#d84315" stroke-width="2.6" stroke-linecap="round" opacity="0.75" fill="none"/>
 
-            <!-- Blushing Cheeks -->
-            <circle id="blush-left" class="cat-blush" cx="82" cy="128" r="14" fill="url(#blushGrad)"/>
-            <circle id="blush-right" class="cat-blush" cx="158" cy="128" r="14" fill="url(#blushGrad)"/>
+            <!-- Chubby Soft Muzzle Lobes -->
+            <ellipse cx="127" cy="144" rx="16" ry="12" fill="url(#catCream)"/>
+            <ellipse cx="153" cy="144" rx="16" ry="12" fill="url(#catCream)"/>
 
-            <!-- Whiskers -->
-            <g stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.85">
-              <line x1="78" y1="126" x2="42" y2="120"/>
-              <line x1="78" y1="131" x2="44" y2="134"/>
-              <line x1="162" y1="126" x2="198" y2="120"/>
-              <line x1="162" y1="131" x2="196" y2="134"/>
+            <!-- Soft Airbrushed Blush Cheeks -->
+            <circle id="blush-left" class="cat-blush" cx="95" cy="142" r="16" fill="url(#blushSoft)"/>
+            <circle id="blush-right" class="cat-blush" cx="185" cy="142" r="16" fill="url(#blushSoft)"/>
+
+            <!-- Delicate Whiskers with Soft Drop Shadow -->
+            <g stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.9">
+              <line x1="95" y1="140" x2="52" y2="134"/>
+              <line x1="94" y1="146" x2="55" y2="150"/>
+              <line x1="96" y1="152" x2="60" y2="162"/>
+              <line x1="185" y1="140" x2="228" y2="134"/>
+              <line x1="186" y1="146" x2="225" y2="150"/>
+              <line x1="184" y1="152" x2="220" y2="162"/>
             </g>
 
-            <!-- Eyes Group -->
+            <!-- Eyebrows (Dynamic Emotional Angles) -->
+            <g id="cat-eyebrows" class="cat-eyebrows">
+              <path id="brow-left" class="brow brow-left" d="M 98 100 Q 110 97 118 101" stroke="#bf360c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <path id="brow-right" class="brow brow-right" d="M 182 100 Q 170 97 162 101" stroke="#bf360c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </g>
+
+            <!-- Luminous Pixar/Anime Eyes -->
             <g id="eyes-group" class="eyes-group">
-              <!-- Normal Eyes -->
+              
+              <!-- 1. Normal / Curious Eyes (Glassy Specular Depth) -->
               <g id="normal-eyes">
-                <!-- Left Eye -->
-                <ellipse cx="94" cy="110" rx="14" ry="16" fill="#ffffff"/>
-                <!-- Right Eye (Peeking) -->
-                <ellipse cx="146" cy="110" rx="14" ry="16" fill="#ffffff"/>
+                <!-- Left Eye Socket -->
+                <ellipse cx="110" cy="120" rx="16" ry="18" fill="#1a1a1a"/>
+                <ellipse cx="110" cy="120" rx="15" ry="17" fill="#ffffff"/>
+                <!-- Right Eye Socket (Peeking Out!) -->
+                <ellipse cx="170" cy="120" rx="16" ry="18" fill="#1a1a1a"/>
+                <ellipse cx="170" cy="120" rx="15" ry="17" fill="#ffffff"/>
 
-                <!-- Left Pupil -->
-                <g id="pupil-left">
-                  <ellipse cx="94" cy="110" rx="10" ry="13" fill="url(#eyeGrad)"/>
-                  <ellipse cx="94" cy="110" rx="6.5" ry="10" fill="#111111"/>
-                  <circle cx="91" cy="105" r="3.5" fill="#ffffff"/>
+                <!-- Left Iris & Specular Highlights -->
+                <g id="iris-left-container">
+                  <ellipse cx="110" cy="120" rx="12" ry="14.5" fill="url(#catIris)"/>
+                  <ellipse id="pupil-left" cx="110" cy="120" rx="7.5" ry="11" fill="#0d1b18"/>
+                  <!-- Glassy Specular Lights -->
+                  <circle cx="106" cy="114" r="4" fill="#ffffff"/>
+                  <circle cx="114" cy="125" r="2" fill="#ffffff" opacity="0.8"/>
+                  <path d="M 104 126 Q 110 131 116 127" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
                 </g>
 
-                <!-- Right Pupil (Cursor Tracker) -->
-                <g id="pupil-right">
-                  <ellipse cx="146" cy="110" rx="10" ry="13" fill="url(#eyeGrad)"/>
-                  <ellipse cx="146" cy="110" rx="6.5" ry="10" fill="#111111"/>
-                  <circle cx="143" cy="105" r="3.5" fill="#ffffff"/>
-                  <circle cx="149" cy="114" r="1.8" fill="#ffffff"/>
+                <!-- Right Iris & Dynamic Cursor Tracking Pupil -->
+                <g id="iris-right-container">
+                  <ellipse cx="170" cy="120" rx="12" ry="14.5" fill="url(#catIris)"/>
+                  <g id="pupil-right-group">
+                    <ellipse id="pupil-right" cx="170" cy="120" rx="7.5" ry="11" fill="#0d1b18"/>
+                    <!-- Glassy Specular Lights -->
+                    <circle cx="166" cy="114" r="4" fill="#ffffff"/>
+                    <circle cx="174" cy="125" r="2" fill="#ffffff" opacity="0.8"/>
+                    <path d="M 164 126 Q 170 131 176 127" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                  </g>
                 </g>
 
-                <!-- Eyelids for Blinking -->
-                <path id="eyelid-left" class="eyelid" d="M 80 110 Q 94 94 108 110 Z" fill="#ffa726"/>
-                <path id="eyelid-right" class="eyelid" d="M 132 110 Q 146 94 160 110 Z" fill="#ffa726"/>
+                <!-- Organic Eyelids for Blinking -->
+                <path id="eyelid-left" class="eyelid" d="M 94 120 C 94 102, 126 102, 126 120 Z" fill="#ffa726"/>
+                <path id="eyelid-right" class="eyelid" d="M 154 120 C 154 102, 186 102, 186 120 Z" fill="#ffa726"/>
               </g>
 
-              <!-- Happy Curved Eyes -->
+              <!-- 2. Happy Crescent Eyes (^ ^ Blissful Squint) -->
               <g id="happy-eyes" class="hidden">
-                <path d="M 82 112 Q 94 96 106 112" stroke="#2e1c0c" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-                <path d="M 134 112 Q 146 96 158 112" stroke="#2e1c0c" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <path d="M 96 122 C 102 108, 118 108, 124 122" stroke="#26170d" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <path d="M 156 122 C 162 108, 178 108, 184 122" stroke="#26170d" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                <!-- Crinkle smile lines -->
+                <path d="M 93 126 L 97 124" stroke="#26170d" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M 187 126 L 183 124" stroke="#26170d" stroke-width="2.5" stroke-linecap="round"/>
               </g>
 
-              <!-- Sad Teary Eyes -->
+              <!-- 3. Heartbroken Watery Crying Eyes (Puss-in-Boots Glassy Tears) -->
               <g id="sad-eyes" class="hidden">
-                <ellipse cx="94" cy="110" rx="14" ry="16" fill="#ffffff"/>
-                <ellipse cx="146" cy="110" rx="14" ry="16" fill="#ffffff"/>
-                <ellipse cx="94" cy="113" rx="11" ry="13" fill="#111111"/>
-                <ellipse cx="146" cy="113" rx="11" ry="13" fill="#111111"/>
-                <circle cx="92" cy="108" r="4.5" fill="#ffffff"/>
-                <circle cx="96" cy="115" r="2.5" fill="#ffffff"/>
-                <circle cx="144" cy="108" r="4.5" fill="#ffffff"/>
-                <circle cx="148" cy="115" r="2.5" fill="#ffffff"/>
+                <!-- Giant Dilated Pupils Filled with Glassy Vulnerability -->
+                <ellipse cx="110" cy="120" rx="16" ry="18" fill="#0b1715"/>
+                <ellipse cx="170" cy="120" rx="16" ry="18" fill="#0b1715"/>
+                <!-- Teary Shimmering Irises -->
+                <ellipse cx="110" cy="121" rx="14" ry="16" fill="url(#catIris)" opacity="0.65"/>
+                <ellipse cx="170" cy="121" rx="14" ry="16" fill="url(#catIris)" opacity="0.65"/>
+                <ellipse cx="110" cy="121" rx="11" ry="13.5" fill="#080f0e"/>
+                <ellipse cx="170" cy="121" rx="11" ry="13.5" fill="#080f0e"/>
 
-                <!-- Flowing Animated Tears -->
-                <path class="tear tear-left" d="M 94 122 Q 91 138 90 148 Q 94 154 97 148 Z" fill="#4fc3f7" opacity="0.9"/>
-                <path class="tear tear-right" d="M 146 122 Q 143 138 142 148 Q 146 154 149 148 Z" fill="#4fc3f7" opacity="0.9"/>
+                <!-- Sparkling Watery Reflections in Both Eyes -->
+                <circle cx="106" cy="114" r="5" fill="#ffffff"/>
+                <circle cx="113" cy="124" r="3" fill="#ffffff" opacity="0.9"/>
+                <circle cx="104" cy="124" r="2" fill="#ffffff" opacity="0.7"/>
+                
+                <circle cx="166" cy="114" r="5" fill="#ffffff"/>
+                <circle cx="173" cy="124" r="3" fill="#ffffff" opacity="0.9"/>
+                <circle cx="164" cy="124" r="2" fill="#ffffff" opacity="0.7"/>
+
+                <!-- Lower Eyelid Waterline Pooling with Tears -->
+                <path d="M 98 126 Q 110 134 122 127" stroke="rgba(128, 222, 234, 0.95)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M 158 126 Q 170 134 182 127" stroke="rgba(128, 222, 234, 0.95)" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+                <!-- Streaming Animated Tear Cascades -->
+                <g class="tear-cascade-left">
+                  <path class="tear-stream stream-left" d="M 108 132 C 107 145, 104 158, 103 172" stroke="url(#tearStreamGrad)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                  <circle class="tear-drop drop-left" cx="103" cy="172" r="3.5" fill="#80deea"/>
+                </g>
+                <g class="tear-cascade-right">
+                  <path class="tear-stream stream-right" d="M 172 132 C 173 145, 176 158, 177 172" stroke="url(#tearStreamGrad)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                  <circle class="tear-drop drop-right" cx="177" cy="172" r="3.5" fill="#80deea"/>
+                </g>
               </g>
+
             </g>
 
-            <!-- Nose & Mouth -->
-            <polygon points="117,126 123,126 120,130" fill="#ff4081"/>
-            <path id="cat-mouth" d="M 114 132 Q 120 137 120 131 Q 120 137 126 132" stroke="#2e1c0c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <!-- Cute Button Nose -->
+            <polygon points="137,138 143,138 140,143" fill="#ff4081"/>
+            <circle cx="139" cy="139" r="0.8" fill="#ffffff"/>
+
+            <!-- Expressive Mouth Group -->
+            <g id="cat-mouth-group">
+              <!-- Normal Cat W Smile -->
+              <path id="mouth-normal" d="M 132 144 Q 140 149 140 143 Q 140 149 148 144" stroke="#2e1c0c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <!-- Quivering Sad Pout (Hidden initially) -->
+              <path id="mouth-sad" class="hidden mouth-tremble" d="M 133 148 Q 140 142 147 148" stroke="#2e1c0c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              <!-- Happy Open Grin (Hidden initially) -->
+              <g id="mouth-happy" class="hidden">
+                <path d="M 132 143 Q 140 156 148 143 Z" fill="#ff4081"/>
+                <!-- Tiny tongue tip -->
+                <path d="M 135 148 Q 140 155 145 148" fill="#ff80ab"/>
+              </g>
+            </g>
           </g>
 
-          <!-- Organic Connected Arms & Paws -->
+          <!-- Organic Paws & Arms System -->
           <g id="paws-layer">
-            <!-- Left Arm & Paw (Covering Left Eye) -->
+            
+            <!-- Left Arm & Paw (Gently Cupped Over Left Eye in Peeking Mode) -->
             <g id="paw-left" class="cat-paw paw-left">
-              <!-- Arm connecting from shoulder to eye -->
-              <path d="M 72 165 C 65 145, 68 125, 88 108" stroke="url(#catBodyGrad)" stroke-width="24" stroke-linecap="round" fill="none"/>
-              <!-- Paw Hand over Eye -->
-              <ellipse cx="90" cy="108" rx="18" ry="16" fill="url(#catBodyGrad)"/>
-              <ellipse cx="82" cy="103" rx="4.5" ry="5.5" fill="#ff80ab"/>
-              <ellipse cx="90" cy="99" rx="5" ry="6" fill="#ff80ab"/>
-              <ellipse cx="98" cy="103" rx="4.5" ry="5.5" fill="#ff80ab"/>
-              <ellipse cx="90" cy="111" rx="6.5" ry="5" fill="#ff80ab"/>
-            </g>
-
-            <!-- Right Arm & Paw (Resting Angled Below Eye, Peeking Through Separated Fingers) -->
-            <g id="paw-right" class="cat-paw paw-right">
-              <!-- Arm connecting from right shoulder to cheek -->
-              <path d="M 168 165 C 175 145, 172 135, 150 126" stroke="url(#catBodyGrad)" stroke-width="24" stroke-linecap="round" fill="none"/>
-              <!-- Paw Hand with Separated Peeking Fingers -->
-              <g id="paw-right-hand">
-                <ellipse cx="148" cy="126" rx="18" ry="16" fill="url(#catBodyGrad)"/>
-                <ellipse cx="148" cy="130" rx="7" ry="5.5" fill="#ff80ab"/>
-                <!-- Separated Fingers Peeking -->
-                <ellipse cx="138" cy="118" rx="4.5" ry="6" fill="#ff80ab"/>
-                <ellipse cx="148" cy="115" rx="5" ry="6.5" fill="#ff80ab"/>
-                <ellipse cx="158" cy="118" rx="4.5" ry="6" fill="#ff80ab"/>
+              <!-- Natural arm flowing from shoulder -->
+              <path d="M 85 180 C 72 155, 78 130, 102 115" stroke="url(#catFurBody)" stroke-width="26" stroke-linecap="round" fill="none"/>
+              
+              <!-- Soft Marshmallow Paw Resting Over Eye -->
+              <g id="paw-left-hand">
+                <ellipse cx="104" cy="115" rx="17" ry="15" fill="url(#catFurHead)"/>
+                <!-- Heart-shaped main pad -->
+                <ellipse cx="104" cy="118" rx="6.5" ry="5.5" fill="url(#pawPadGrad)"/>
+                <!-- 3 Cute Rounded Toe Beans -->
+                <ellipse cx="94" cy="110" rx="4.5" ry="5.5" fill="url(#pawPadGrad)"/>
+                <ellipse cx="104" cy="106" rx="5" ry="6" fill="url(#pawPadGrad)"/>
+                <ellipse cx="114" cy="110" rx="4.5" ry="5.5" fill="url(#pawPadGrad)"/>
               </g>
             </g>
+
+            <!-- Right Arm & Paw (Resting by Cheek with Separated Fingers to Peek Through!) -->
+            <g id="paw-right" class="cat-paw paw-right">
+              <!-- Natural arm flowing from right shoulder -->
+              <path d="M 195 180 C 208 155, 200 135, 176 130" stroke="url(#catFurBody)" stroke-width="26" stroke-linecap="round" fill="none"/>
+              
+              <!-- Soft Marshmallow Paw with Parted Fingers -->
+              <g id="paw-right-hand">
+                <ellipse cx="174" cy="132" rx="17" ry="15" fill="url(#catFurHead)"/>
+                <!-- Heart-shaped main pad -->
+                <ellipse cx="174" cy="136" rx="6.5" ry="5.5" fill="url(#pawPadGrad)"/>
+                <!-- 3 Distinct Separated Toe Beans (Creating the Peeking Window) -->
+                <ellipse cx="163" cy="123" rx="4.5" ry="6" fill="url(#pawPadGrad)"/>
+                <ellipse cx="174" cy="120" rx="5" ry="6.5" fill="url(#pawPadGrad)"/>
+                <ellipse cx="185" cy="124" rx="4.5" ry="6" fill="url(#pawPadGrad)"/>
+              </g>
+            </g>
+
           </g>
 
         </svg>

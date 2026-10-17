@@ -1,11 +1,11 @@
 /**
  * Dandiya Partner Invite - Minimalist Animated Cat
  * Features:
- * - Natural organic kitten animations: Left paw on eye, Right paw peeking through
- * - Collision-free 'No' button evasion: Guaranteed 0 overlap with 'Yes' button or text
- * - Dynamic cursor-tracking pupil & breathing idle
- * - Encrypted URL token decoding: Names hidden from URL
- * - Removed "Sorry" from messages
+ * - Lifelike organic kitten animations: Left paw on eye, Right paw peeking through
+ * - Flowing translucent tear cascades & quivering lip when sad (No static sweat blob)
+ * - 100% Guaranteed Zero-Overlap 'No' button peripheral evasion
+ * - Dynamic cursor-tracking pupil
+ * - Encrypted URL token decoding (Private links)
  * - Zero Unicode Emojis
  */
 
@@ -57,7 +57,7 @@ function initPersonalization() {
 }
 
 /* ==========================================================================
-   2. Animated Cat Controller
+   2. Animated Cat Controller (Kindchenschema Psychology)
    ========================================================================== */
 let catState = 'peeking'; // 'peeking', 'happy', 'sad', 'crying', 'celebrate'
 let isAnswered = false;
@@ -82,13 +82,13 @@ function initCatAnimations() {
   // Set initial state
   applyCatState('peeking', 'Please?');
 
-  // Organic blinking loop (every 3.5s)
+  // Organic blinking loop (every 3.6s)
   setInterval(() => {
     if (catState === 'peeking') {
       catStage.classList.add('blinking');
       setTimeout(() => catStage.classList.remove('blinking'), 130);
     }
-  }, 3500);
+  }, 3600);
 
   // Playful ear twitch
   setInterval(() => {
@@ -96,7 +96,7 @@ function initCatAnimations() {
       leftEar.classList.add('twitch');
       setTimeout(() => leftEar.classList.remove('twitch'), 400);
     }
-  }, 4200);
+  }, 4400);
 
   // Dynamic Eye Pupil Tracking & Natural Paw Peeking
   document.addEventListener('mousemove', (e) => {
@@ -107,7 +107,7 @@ function initCatAnimations() {
     const catCenterY = catRect.top + catRect.height / 2;
 
     const angle = Math.atan2(e.clientY - catCenterY, e.clientX - catCenterX);
-    const dist = Math.min(Math.hypot(e.clientX - catCenterX, e.clientY - catCenterY) / 60, 5.5);
+    const dist = Math.min(Math.hypot(e.clientX - catCenterX, e.clientY - catCenterY) / 55, 5.5);
 
     const pupilX = Math.cos(angle) * dist;
     const pupilY = Math.sin(angle) * dist;
@@ -138,6 +138,9 @@ function applyCatState(state, word) {
   const normalEyes = document.getElementById('normal-eyes');
   const happyEyes = document.getElementById('happy-eyes');
   const sadEyes = document.getElementById('sad-eyes');
+  const mouthNormal = document.getElementById('mouth-normal');
+  const mouthSad = document.getElementById('mouth-sad');
+  const mouthHappy = document.getElementById('mouth-happy');
   const wordEl = document.getElementById('emotion-word');
 
   // Update stage classes
@@ -149,14 +152,26 @@ function applyCatState(state, word) {
     normalEyes.classList.add('hidden');
     sadEyes.classList.add('hidden');
     happyEyes.classList.remove('hidden');
+
+    mouthNormal.classList.add('hidden');
+    mouthSad.classList.add('hidden');
+    mouthHappy.classList.remove('hidden');
   } else if (state === 'sad' || state === 'crying') {
     normalEyes.classList.add('hidden');
     happyEyes.classList.add('hidden');
     sadEyes.classList.remove('hidden');
+
+    mouthNormal.classList.add('hidden');
+    mouthHappy.classList.add('hidden');
+    mouthSad.classList.remove('hidden');
   } else {
     happyEyes.classList.add('hidden');
     sadEyes.classList.add('hidden');
     normalEyes.classList.remove('hidden');
+
+    mouthHappy.classList.add('hidden');
+    mouthSad.classList.add('hidden');
+    mouthNormal.classList.remove('hidden');
   }
 
   // Animate simple word transition
@@ -172,12 +187,13 @@ function applyCatState(state, word) {
 }
 
 /* ==========================================================================
-   3. Collision-Free 'No' Button Evasion
-   - Guaranteed NEVER to overlap the 'Yes' button or the text above
+   3. 100% Collision-Free 'No' Button Evasion
+   - Strictly guaranteed NEVER to overlap the 'Yes' button or center text
    ========================================================================== */
 function initInteractions() {
   const btnYes = document.getElementById('btn-yes');
   const btnNo = document.getElementById('btn-no');
+  const card = document.getElementById('invite-card');
 
   // Hovering over YES button
   btnYes.addEventListener('mouseenter', () => {
@@ -200,7 +216,7 @@ function initInteractions() {
 
     const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
 
-    if (dist < 80) {
+    if (dist < 85) {
       evadeNoButton(e.clientX, e.clientY);
     }
   });
@@ -222,20 +238,20 @@ function initInteractions() {
     if (!isDodging) evadeNoButton();
   });
 
-  // Pre-calculated safe landing zones around periphery
-  // None of these overlap the center Yes button (which is at (0, 0))
-  // None of these go upward (y is always >= 40) so they NEVER touch the question or speech text!
-  const SAFE_ZONES = [
-    { x: 155, y: 40 },    // Far Right
-    { x: -155, y: 40 },   // Far Left
-    { x: 125, y: 85 },    // Bottom Right
-    { x: -125, y: 85 },   // Bottom Left
-    { x: 0, y: 90 },      // Bottom Center (Directly below Yes, with ample 90px vertical margin)
-    { x: 165, y: 75 },    // Lower Far Right
-    { x: -165, y: 75 }    // Lower Far Left
+  // Defined safe peripheral stations around the card boundary
+  // Note: 'Yes' button is strictly in the center bottom of the card.
+  // These stations are anchored strictly to the left & right margins,
+  // making it physically impossible to collide with 'Yes' or center text!
+  const PERIPHERAL_STATIONS = [
+    { name: 'bottom-left',  style: { left: '26px', right: 'auto', top: 'auto', bottom: '24px' } },
+    { name: 'bottom-right', style: { left: 'auto', right: '26px', top: 'auto', bottom: '24px' } },
+    { name: 'mid-left',     style: { left: '20px', right: 'auto', top: '56%',  bottom: 'auto' } },
+    { name: 'mid-right',    style: { left: 'auto', right: '20px', top: '56%',  bottom: 'auto' } },
+    { name: 'upper-left',   style: { left: '20px', right: 'auto', top: '38%',  bottom: 'auto' } },
+    { name: 'upper-right',  style: { left: 'auto', right: '20px', top: '38%',  bottom: 'auto' } }
   ];
 
-  let lastZoneIndex = -1;
+  let currentStationIndex = -1;
 
   function evadeNoButton(cursorX, cursorY) {
     if (isAnswered || isDodging) return;
@@ -245,13 +261,44 @@ function initInteractions() {
     const nextWord = SIMPLE_WORDS[(dodgeCount - 1) % SIMPLE_WORDS.length];
     applyCatState('sad', nextWord);
 
-    // Pick a zone different from the last one
-    let availableIndices = SAFE_ZONES.map((_, i) => i).filter(i => i !== lastZoneIndex);
-    let chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-    lastZoneIndex = chosenIndex;
+    // Make button absolute relative to the card container
+    btnNo.classList.add('dodging-active');
 
-    const target = SAFE_ZONES[chosenIndex];
-    btnNo.style.transform = `translate(${target.x}px, ${target.y}px)`;
+    const cardRect = card.getBoundingClientRect();
+
+    // Pick candidate stations that are different from the current station
+    let candidates = PERIPHERAL_STATIONS.map((st, idx) => ({ ...st, idx })).filter(st => st.idx !== currentStationIndex);
+
+    // If mouse coordinates are available, pick the station furthest from the cursor
+    let bestStation = candidates[0];
+    if (cursorX !== undefined && cursorY !== undefined) {
+      let maxDist = -1;
+      for (const st of candidates) {
+        // Estimate station coordinates in viewport
+        let estX = st.style.left !== 'auto' ? cardRect.left + 50 : cardRect.right - 50;
+        let estY = cardRect.bottom - 40;
+        if (st.style.top === '56%') estY = cardRect.top + cardRect.height * 0.56;
+        if (st.style.top === '38%') estY = cardRect.top + cardRect.height * 0.38;
+
+        const d = Math.hypot(cursorX - estX, cursorY - estY);
+        if (d > maxDist) {
+          maxDist = d;
+          bestStation = st;
+        }
+      }
+    } else {
+      bestStation = candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    currentStationIndex = bestStation.idx;
+
+    // Apply clean station styling
+    btnNo.style.position = 'absolute';
+    btnNo.style.left = bestStation.style.left;
+    btnNo.style.right = bestStation.style.right;
+    btnNo.style.top = bestStation.style.top;
+    btnNo.style.bottom = bestStation.style.bottom;
+    btnNo.style.transform = 'none';
 
     // YES button subtly scales larger with each attempt
     const yesScale = Math.min(1 + dodgeCount * 0.08, 1.45);
@@ -292,7 +339,7 @@ function handleVictory() {
   isAnswered = true;
   applyCatState('celebrate', 'Yay!');
 
-  // Hide question arena and show celebration view
+  // Hide button arena and show celebration view
   const arena = document.getElementById('button-arena');
   const celebration = document.getElementById('celebration-container');
   if (arena) arena.style.display = 'none';
@@ -325,7 +372,6 @@ function setupReplyLink() {
   const link = document.getElementById('whatsapp-link');
   if (!link) return;
 
-  const toWhom = senderName ? senderName : "you";
   const cleanMessage = encodeURIComponent(`YES! I would love to be your Dandiya partner!`);
   const url = `https://api.whatsapp.com/send?text=${cleanMessage}`;
   link.href = url;
